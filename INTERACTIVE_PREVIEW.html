@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Go Beyond the Bedliner — 3J's Auto Body</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Montserrat',sans-serif;background:#0A0A0A;color:#fff;overflow-x:hidden;}
+
+    /* ─── HERO ─── */
+    .hero{position:relative;width:100%;overflow:hidden;}
+    .hero-img{width:100%;height:auto;display:block;}
+    .hero-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.52);}
+    .hero-content{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;}
+    .hero-eyebrow{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#8B0000;margin-bottom:14px;}
+    .hero-content h1{font-size:clamp(28px,6vw,68px);font-weight:900;line-height:1.0;letter-spacing:-1.5px;text-transform:uppercase;}
+    .hero-content h1 em{font-style:normal;color:#8B0000;}
+    .hero-sub{font-size:clamp(12px,1.5vw,16px);font-weight:500;color:rgba(255,255,255,0.65);margin-top:14px;letter-spacing:0.3px;}
+    .scroll-hint{margin-top:28px;display:flex;flex-direction:column;align-items:center;gap:6px;opacity:0.5;}
+    .scroll-hint span{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;}
+    .arrow{width:1px;height:36px;background:linear-gradient(to bottom,rgba(255,255,255,0),rgba(255,255,255,0.6));animation:drop 1.6s infinite;}
+    @keyframes drop{0%,100%{transform:translateY(-6px);opacity:0;}50%{transform:translateY(6px);opacity:1;}}
+
+    /* ─── DIAGRAM SECTION ─── */
+    .diagram-section{background:#0A0A0A;padding:56px 0 72px;}
+    .diagram-label{text-align:center;margin-bottom:36px;padding:0 20px;}
+    .diagram-label p{font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:#8B0000;margin-bottom:10px;}
+    .diagram-label h2{font-size:clamp(20px,3.5vw,34px);font-weight:900;letter-spacing:-0.5px;}
+    .diagram-label h2 em{font-style:normal;color:#8B0000;}
+    .diagram-label .hint{font-size:12px;font-weight:500;color:#444;margin-top:8px;letter-spacing:0.3px;}
+
+    /* Truck container */
+    .truck-wrap{position:relative;width:100%;max-width:1200px;margin:0 auto;overflow:visible;}
+    .truck-img{width:100%;height:auto;display:block;}
+    .truck-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.30);pointer-events:none;}
+
+    /* SVG lines layer */
+    .lines-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
+    .anim-line{stroke:#8B0000;stroke-width:0.45;fill:none;stroke-dasharray:150;stroke-dashoffset:150;transition:stroke-dashoffset 2.0s cubic-bezier(0.4,0,0.2,1);}
+    .truck-wrap.animated .anim-line{stroke-dashoffset:0;}
+
+    /* Line stagger delays */
+    .l1{transition-delay:0.00s;}.l2{transition-delay:0.25s;}.l3{transition-delay:0.50s;}
+    .l4{transition-delay:0.75s;}.l5{transition-delay:1.00s;}.l6{transition-delay:1.25s;}
+    .l7{transition-delay:1.50s;}.l8{transition-delay:1.75s;}.l9{transition-delay:2.00s;}
+    .l10{transition-delay:2.25s;}.l11{transition-delay:2.50s;}.l12{transition-delay:2.75s;}
+    .l13{transition-delay:3.00s;}
+
+    /* Hotspot wrapper */
+    .hs{position:absolute;transform:translate(-50%,-50%);z-index:20;cursor:pointer;}
+
+    /* Splatter icon */
+    .hs-icon{position:relative;width:44px;height:44px;transition:transform 0.2s;}
+    .hs-icon img{width:44px;height:44px;object-fit:contain;display:block;transition:filter 0.25s;}
+    .center-dot{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:14px;height:14px;border-radius:50%;background:#8B0000;transition:background 0.25s,transform 0.2s;box-shadow:0 0 0 3px rgba(139,0,0,0.3);}
+
+    /* Pulse ring */
+    .center-dot::after{content:'';position:absolute;inset:-3px;border-radius:50%;border:3px solid rgba(139,0,0,0.6);animation:pulse 2s infinite;}
+    @keyframes pulse{0%{transform:scale(1);opacity:0.7;}100%{transform:scale(2.4);opacity:0;}}
+
+    /* Hover: swap colors */
+    .hs:hover .hs-icon{transform:scale(1.12);}
+    .hs:hover .hs-icon img{
+      /* Convert black PNG to dark red #8B0000 */
+      filter:invert(9%) sepia(87%) saturate(3891%) hue-rotate(353deg) brightness(98%) contrast(116%);
+    }
+    .hs:hover .center-dot{background:#111;box-shadow:0 0 0 3px rgba(0,0,0,0.3);}
+    .hs:hover .center-dot::after{animation:none;opacity:0;}
+
+    /* Labels — fade in when their line finishes drawing */
+    .hs-label{position:absolute;white-space:nowrap;font-size:10px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;color:#fff;text-shadow:0 1px 8px rgba(0,0,0,1),0 0 20px rgba(0,0,0,0.8);pointer-events:none;opacity:0;transition:opacity 0.5s ease;}
+    .truck-wrap.animated .hs-label{opacity:1;}
+    /* Each label delay = its line's stagger delay + 2.0s draw time */
+    .lb1{transition-delay:2.00s;}.lb2{transition-delay:2.25s;}.lb3{transition-delay:2.50s;}
+    .lb4{transition-delay:2.75s;}.lb5{transition-delay:3.00s;}.lb6{transition-delay:3.25s;}
+    .lb7{transition-delay:3.50s;}.lb8{transition-delay:3.75s;}.lb9{transition-delay:4.00s;}
+    .lb10{transition-delay:4.25s;}.lb11{transition-delay:4.50s;}.lb12{transition-delay:4.75s;}.lb13{transition-delay:5.00s;}
+
+    /* Popup */
+    .popup{position:absolute;background:#fff;border-radius:10px;padding:14px 16px;width:210px;box-shadow:0 10px 40px rgba(0,0,0,0.55);opacity:0;pointer-events:none;transition:opacity 0.2s,transform 0.2s;z-index:100;}
+    .hs:hover .popup{opacity:1;pointer-events:auto;}
+    .popup-tag{font-size:9px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;color:#8B0000;margin-bottom:4px;}
+    .popup-title{font-size:13px;font-weight:800;color:#1B2A3B;margin-bottom:5px;line-height:1.3;}
+    .popup-desc{font-size:11.5px;font-weight:500;color:#4A5568;line-height:1.65;}
+
+    /* Popup positions */
+    .popup::after{content:'';position:absolute;width:9px;height:9px;background:#fff;transform:rotate(45deg);}
+    .p-above{bottom:calc(100% + 12px);left:50%;transform:translateX(-50%);}
+    .p-above::after{bottom:-4px;left:50%;margin-left:-4px;}
+    .p-below{top:calc(100% + 12px);left:50%;transform:translateX(-50%);}
+    .p-below::after{top:-4px;left:50%;margin-left:-4px;}
+    .p-right{left:calc(100% + 12px);top:50%;transform:translateY(-50%);}
+    .p-right::after{left:-4px;top:50%;margin-top:-4px;}
+    .p-left{right:calc(100% + 12px);top:50%;transform:translateY(-50%);}
+    .p-left::after{right:-4px;top:50%;margin-top:-4px;}
+    .p-above-right{bottom:calc(100% + 12px);left:0;}
+    .p-above-right::after{bottom:-4px;left:16px;}
+    .p-above-left{bottom:calc(100% + 12px);right:0;}
+    .p-above-left::after{bottom:-4px;right:16px;}
+
+    /* Bottom CTA */
+    .cta{background:#0A0A0A;padding:52px 24px;text-align:center;}
+    .cta h3{font-size:clamp(18px,3vw,28px);font-weight:900;margin-bottom:10px;}
+    .cta h3 em{font-style:normal;color:#8B0000;}
+    .cta p{font-size:13px;color:#666;font-weight:500;margin-bottom:24px;}
+    .cta-btn{display:inline-flex;align-items:center;gap:8px;background:#8B0000;color:#fff;font-family:'Montserrat',sans-serif;font-size:13px;font-weight:700;text-decoration:none;padding:13px 28px;border-radius:8px;border:2px solid transparent;transition:background 0.2s,border-color 0.2s;}
+    .cta-btn:hover{background:#A00000;border-color:#BF3030;}
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════
+     HERO — Two Trucks
+════════════════════════════════════════ -->
+<section class="hero">
+  <img class="hero-img" src="2 TRUCKS.png" alt="3J's Auto Body — Go Beyond the Bedliner" />
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">3J's Auto Body &amp; Paint — Signal Hill, CA</p>
+    <h1>Go Beyond<br>the <em>Bedliner</em></h1>
+    <p class="hero-sub">Full-service truck builds, collision repair &amp; accessories — all under one roof</p>
+    <div class="scroll-hint">
+      <span>Explore</span>
+      <div class="arrow"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════
+     DIAGRAM — Silver Ford Raptor
+════════════════════════════════════════ -->
+<section class="diagram-section">
+  <div class="diagram-label">
+    <p>Interactive Service Guide</p>
+    <h2>Everything We Do — <em>Built Into One Truck</em></h2>
+    <p class="hint">Hover any marker to explore our services</p>
+  </div>
+
+  <div class="truck-wrap" id="diagram">
+
+    <img class="truck-img" src="RLSH-ford-truck.jpg" alt="Ford Raptor — Interactive Service Diagram" />
+    <div class="truck-overlay"></div>
+
+    <!-- ── SVG Animated Lines ── -->
+    <svg class="lines-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+      <!-- Bedliner: dot(21,30) → label(2,16) -->
+      <line class="anim-line l1" x1="21" y1="30" x2="2" y2="16"/>
+      <!-- Full Exterior Paint: dot(33,47) → label(2,38) -->
+      <line class="anim-line l5" x1="33" y1="47" x2="2" y2="38"/>
+      <!-- Rear Bumper: dot(15,55) → label(2,52) -->
+      <line class="anim-line l2" x1="15" y1="55" x2="2" y2="52"/>
+      <!-- Rock Guards: dot(25,60) → label(2,64) -->
+      <line class="anim-line l3" x1="25" y1="60" x2="2" y2="64"/>
+      <!-- Running Boards: dot(30,67) → label(2,80) -->
+      <line class="anim-line l4" x1="30" y1="67" x2="2" y2="80"/>
+      <!-- Exterior/Black Trim: dot(34,23) → label(24,3) -->
+      <line class="anim-line l6" x1="34" y1="23" x2="24" y2="3"/>
+      <!-- Roof Rust: dot(61,8) → label(62,3) -->
+      <line class="anim-line l7" x1="61" y1="8" x2="62" y2="3"/>
+      <!-- Hoods: dot(68,27) → label(88,20) -->
+      <line class="anim-line l8" x1="68" y1="27" x2="88" y2="20"/>
+      <!-- Grille: dot(81,40) → label(92,40) -->
+      <line class="anim-line l9" x1="81" y1="40" x2="92" y2="40"/>
+      <!-- Front Bumper: dot(88,57) → label(92,57) -->
+      <line class="anim-line l10" x1="88" y1="57" x2="92" y2="57"/>
+      <!-- Wheel Wells: dot(44,45) → label(38,97) -->
+      <line class="anim-line l11" x1="44" y1="45" x2="38" y2="97"/>
+      <!-- Undercarriage: dot(59,69) → label(55,97) -->
+      <line class="anim-line l12" x1="59" y1="69" x2="55" y2="97"/>
+      <!-- Skid Plates: dot(73,71) → label(73,97) -->
+      <line class="anim-line l13" x1="73" y1="71" x2="73" y2="97"/>
+    </svg>
+
+    <!-- ── Labels ── -->
+    <div class="hs-label lb1"  style="left:2%;top:16%;transform:translateY(-50%);">BEDLINER</div>
+    <div class="hs-label lb5"  style="left:2%;top:38%;transform:translateY(-50%);">FULL EXTERIOR PAINT</div>
+    <div class="hs-label lb2"  style="left:2%;top:52%;transform:translateY(-50%);">REAR BUMPER</div>
+    <div class="hs-label lb3"  style="left:2%;top:64%;transform:translateY(-50%);">ROCK GUARDS</div>
+    <div class="hs-label lb4"  style="left:2%;top:80%;transform:translateY(-50%);">RUNNING BOARDS</div>
+    <div class="hs-label lb6"  style="left:16%;top:2%;transform:translateY(-50%);">EXTERIOR / BLACK TRIM</div>
+    <div class="hs-label lb7"  style="left:56%;top:2%;transform:translateY(-50%);">ROOF RUST</div>
+    <div class="hs-label lb8"  style="left:89%;top:20%;transform:translateY(-50%);">HOODS</div>
+    <div class="hs-label lb9"  style="left:93%;top:40%;transform:translateY(-50%);">GRILLE</div>
+    <div class="hs-label lb10" style="left:93%;top:57%;transform:translateY(-50%);">FRONT BUMPER</div>
+    <div class="hs-label lb11" style="left:30%;top:98%;transform:translateY(-50%);">WHEEL WELLS</div>
+    <div class="hs-label lb12" style="left:49%;top:98%;transform:translateY(-50%);">UNDERCARRIAGE</div>
+    <div class="hs-label lb13" style="left:67%;top:98%;transform:translateY(-50%);">SKID PLATES</div>
+
+    <!-- ══════════════ HOTSPOTS ══════════════ -->
+
+    <!-- 1. BEDLINER -->
+    <div class="hs" style="left:21%;top:30%;">
+      <div class="hs-icon"><img src="black splatter icon.png" alt="" /><div class="center-dot"></div></div>
+      <div class="popup p-right">
+        <div class="popup-tag">Truck Bed Protection</div>
+        <div class="popup-title">Spray-In Bedliners</div>
+        <div class="popup-desc">We are a certified Rhino Liner installer. Permanent bond, textured finish, same-day service, and a lifetime warranty. Not the drop-in kind — the real thing.</div>
+      </div>
+    </div>
+
+    <!-- 2. REAR BUMPER -->
+    <div class="hs" style="left:15%;top:55%;">
+      <div class="hs-icon"><img src="black splatter icon.png" alt="" /><div class="center-dot"></div></div>
+      <div class="popup p-right">
+        <div class="popup-tag">Rear End</div>
+        <div class="popup-title">Rear Bumpers</div>
+        <div class="popup-desc">Collision damage, rust, or just an upgrade — we repair, replace, and color-match rear bumpers on any Truck, SUV or Jeep.</div>
+      </div>
+    </div>
+
+    <!-- 3. ROCK GUARDS -->
+    <div class="hs" style="left:25%;top:60%;">
+      <div class="hs-icon"><img src="black splatter icon.png" alt="" /><div class="center-dot"></div></div>
+      <div class="popup p-right">
+        <div class="popup-tag">Fender Protection</div>
+        <div class="popup-title">Rock Guard Protection</div>
+        <div class="popup-desc">Rock guard protection is an off-road or outdoors must-have. We protect the lower section of your vehicle's body with Rhino Linings materials to stop chips, rocks, and road debris on and off road. We can color match too — so it blends in seamlessly.</div>
+      </div>
+    </div>
+
+    <!-- 4. RUNNING BOARDS -->
+    <div class="hs" style="left:30%;top:67%;">
+      <div class="hs-icon"><img src="black splatter icon.png" alt="" /><div class="center-dot"></div></div>
+      <div class="popup p-right">
+        <div class="popup-tag">Side Steps</div>
+        <div class="popup-title">Running Boards</div>
+        <div class="popup-desc">Fixed boards, nerf bars, and power electric retractable steps for all trucks and SUVs — including lifted vehicles. All major brands available.</div>
+      </div>
+    </div>
+
+    <!-- 5. FULL EXTERIOR PAINT -->
+    <div class="hs" style="left:33%;top:47%;">
+      <div class="hs-icon"><img src="black splatter icon.png" alt="" /><div class="center-dot"></div></div>
+      <div class="popup p-right">
+        <div class="popup-tag">Custom Paint</div>
+        <div class="popup-title">Full Exterior Paint Jobs</div>
+        <div class="popup-desc">We can match any factory color or go fully custom. Computer-matched paint for a perfect finish — single panels or full repaints. Shhh... we've even matched colors from home improvement store paint chips.</div>
+      </div>
+    </div>
+
+    <!-- 6. EXTERIOR / BLACK TRIM -->
+    <div class="hs" style="left:34%;top:23%;">
+      <div class="hs-icon"><img src="black splatter icon.png" alt="" /><div class="center-dot"></div></div>
+      <div class="popup p-below">
+        <div class="popup-tag">Exterior Parts</div>
+        <div class="popup-title">Faded Black Trim</div>
+        <div class="popup-desc">Faded grey plastic trim makes any truck look old. We restore or replace black textured parts — pillars, cladding, moldings — back to factory condition. Tons of aftermarket accessories to choose from, or we spray Rhino Linings materials on it so it lasts for years without fading or losing pigment.</div>
+      </div>
+    </div>
+
+    <!-- 7. ROOF RUST -->
+    <div class="hs" style="left:61%;top:8%;">
+      <div class="hs-icon"><img src="black splatter icon.png" alt="" /><div class="center-dot"></div></div>
+      <div class="popup p-below">
+        <div class="popup-tag">Roof Panel</div>
+        <div class="popup-title">Roof Rust Repair</div>
+        <div class="popup-desc">Rust bubbling through the roof? We treat it at the source, repair the panel, and apply Rhino Linings materials over it to help prolong the life of your ride. Common on department vehicles, fleet trucks, and older daily drivers.</div>
+      </div>
+    </div>
+
+    <!-- 8. HOODS -->
+    <div class="hs" style="left:68%;top:27%;">
+      <div class="hs-icon"><img src="black splatter icon.png" alt="" /><div class="center-dot"></div></div>
+      <div class="popup p-left">
+        <div class="popup-tag">Fleet &amp; Police</div>
+        <div class="popup-title">Hood Painting</div>
+        <div class="popup-desc">Custom hood painting, decals, and lettering for local police departments, city fleet vehicles, and commercial trucks. Fast turnaround, done right. Always a lifetime warranty on our workmanship.</div>
+      </div>
+    </div>
+
+    <!-- 9. GRILLE -->
+    <div class="hs" style="left:81%;top:40%;">
+      <div class="hs-icon"><img src="black splatter icon.png" alt="" /><div class="center-dot"></div></div>
+      <div class="popup p-left">
+        <div class="popup-tag">Front Face</div>
+        <div class="popup-title">Grilles</div>
+        <div class="popup-desc">Aftermarket grille installation with factory color match or custom contrast finish. All makes and models — we handle the installation and the paint. Looking for an upgrade? Speak to us directly and we'll help you find the right fit.</div>
+      </div>
+    </div>
+
+    <!-- 10. FRONT BUMPER -->
+    <div class="hs" style="left:88%;top:57%;">
+      <div class="hs-icon"><img src="black splatter icon.png" alt="" /><div class="center-dot"></div></div>
+      <div class="popup p-left">
+        <div class="popup-tag">Front End</div>
+        <div class="popup-title">Front Bumpers</div>
+        <div class="popup-desc">Collision repair, aftermarket upgrades, and color-matched painting. Steel, aluminum, or factory plastic — we work with all of it.</div>
+      </div>
+    </div>
+
+    <!-- 11. WHEEL WELLS -->
+    <div class="hs" style="left:44%;top:45%;">
+      <div class="hs-icon"><img src="black splatter icon.png" alt="" /><div class="center-dot"></div></div>
+      <div class="popup p-above">
+        <div class="popup-tag">Wheel Wells</div>
+        <div class="popup-title">Wheel Well Coating</div>
+        <div class="popup-desc">Spray-in liner coating for wheel wells stops rust, deadens road noise, and protects against rocks and debris kicking up into the body. Plus — it just looks really cool.</div>
+      </div>
+    </div>
+
+    <!-- 12. UNDERCARRIAGE -->
+    <div class="hs" style="left:59%;top:69%;">
+      <div class="hs-icon"><img src="black splatter icon.png" alt="" /><div class="center-dot"></div></div>
+      <div class="popup p-above">
+        <div class="popup-tag">Underside</div>
+        <div class="popup-title">Undercarriage Coating</div>
+        <div class="popup-desc">Full undercarriage spray coating seals out moisture, road salt, and corrosion. Especially important for trucks used off-road, near the coast, or for the winter enthusiast who loves fresh powder on the mountains.</div>
+      </div>
+    </div>
+
+    <!-- 13. SKID PLATES -->
+    <div class="hs" style="left:73%;top:71%;">
+      <div class="hs-icon"><img src="black splatter icon.png" alt="" /><div class="center-dot"></div></div>
+      <div class="popup p-left">
+        <div class="popup-tag">Front Underside</div>
+        <div class="popup-title">Skid Plates</div>
+        <div class="popup-desc">Heavy-duty skid plate installation to protect your engine, transmission, and transfer case. Essential for any truck that goes off road. Don't forget to ask us to Rhino Line it for superior protection.</div>
+      </div>
+    </div>
+
+
+  </div><!-- /.truck-wrap -->
+</section>
+
+<!-- ─── CTA ─── -->
+<div class="cta">
+  <h3>Ready to Build Your <em>Truck?</em></h3>
+  <p>Walk in Mon–Fri 8AM–5PM · Free estimates · 562-424-6744</p>
+  <a href="tel:+15624246744" class="cta-btn">
+    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.7 10.82 19.79 19.79 0 01.67 2.18 2 2 0 012.66 0h3a2 2 0 012 1.72c.13 1 .36 1.97.7 2.91a2 2 0 01-.45 2.11L6.91 7.74a16 16 0 006.29 6.29l1-.99a2 2 0 012.11-.45c.94.34 1.91.57 2.91.7A2 2 0 0122 16.92z"/></svg>
+    Call 562-424-6744
+  </a>
+</div>
+
+<script>
+  // Trigger line draw + label fade when diagram enters view
+  const diagram = document.getElementById('diagram');
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        diagram.classList.add('animated');
+        observer.unobserve(diagram);
+      }
+    });
+  }, { threshold: 0.2 });
+  observer.observe(diagram);
+
+</script>
+
+</body>
+</html>
