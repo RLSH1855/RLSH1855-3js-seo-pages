@@ -14,7 +14,7 @@
     .hero-img{width:100%;height:auto;display:block;}
     .hero-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.52);}
     .hero-content{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;}
-    .hero-eyebrow{font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#8B0000;margin-bottom:14px;}
+    .hero-eyebrow{font-size:11px;font-weight:800;letter-spacing:3px;text-transform:uppercase;color:#ffffff;margin-bottom:14px;}
     .hero-content h1{font-size:clamp(28px,6vw,68px);font-weight:900;line-height:1.0;letter-spacing:-1.5px;text-transform:uppercase;}
     .hero-content h1 em{font-style:normal;color:#8B0000;}
     .hero-sub{font-size:clamp(12px,1.5vw,16px);font-weight:500;color:rgba(255,255,255,0.65);margin-top:14px;letter-spacing:0.3px;}
@@ -61,6 +61,7 @@
     @keyframes pulse{0%{transform:scale(1);opacity:0.7;}100%{transform:scale(2.4);opacity:0;}}
 
     /* Hover: swap colors */
+    .hs:hover{z-index:200;}
     .hs:hover .hs-icon{transform:scale(1.12);}
     .hs:hover .hs-icon img{
       /* Convert black PNG to dark red #8B0000 */
