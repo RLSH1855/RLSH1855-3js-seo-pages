@@ -34,7 +34,7 @@
     /* Truck container */
     .truck-wrap{position:relative;width:100%;max-width:1200px;margin:0 auto;overflow:visible;}
     .truck-img{width:100%;height:auto;display:block;}
-    .truck-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.30);pointer-events:none;}
+    .truck-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.00);pointer-events:none;}
 
     /* SVG lines layer */
     .lines-svg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible;}
@@ -100,6 +100,67 @@
     .p-above-right::after{bottom:-4px;left:16px;}
     .p-above-left{bottom:calc(100% + 12px);right:0;}
     .p-above-left::after{bottom:-4px;right:16px;}
+
+    /* ─── RESPONSIVE ─── */
+
+    /* Tablet */
+    @media (max-width: 900px) {
+      .hs-label{font-size:8px;letter-spacing:1px;}
+      .hs-icon,.hs-icon img{width:38px;height:38px;}
+      .center-dot{width:12px;height:12px;}
+    }
+
+    /* Mobile */
+    @media (max-width: 650px) {
+      /* Hide diagram labels — too cramped */
+      .hs-label{display:none;}
+
+      /* Hide SVG lines on mobile */
+      .lines-svg{display:none;}
+
+      /* Smaller icons, easier to tap */
+      .hs-icon,.hs-icon img{width:32px;height:32px;}
+      .center-dot{width:10px;height:10px;}
+
+      /* Diagram section padding */
+      .diagram-section{padding:30px 0 36px;}
+      .diagram-label{margin-bottom:24px;}
+
+      /* Hint text */
+      .diagram-label .hint{font-size:11px;}
+
+      /* All popups: fixed center of screen on mobile */
+      .popup{
+        position:fixed !important;
+        top:50% !important;
+        left:50% !important;
+        transform:translate(-50%,-50%) !important;
+        bottom:auto !important;
+        right:auto !important;
+        width:88vw !important;
+        max-width:320px !important;
+        z-index:9999 !important;
+        box-shadow:0 20px 60px rgba(0,0,0,0.85) !important;
+      }
+      /* Hide popup arrow on mobile */
+      .popup::after{display:none !important;}
+
+      /* Dim background overlay when popup is open */
+      .hs:hover::before{
+        content:'';
+        position:fixed;
+        inset:0;
+        background:rgba(0,0,0,0.55);
+        z-index:9998;
+      }
+
+      /* Hero eyebrow smaller */
+      .hero-eyebrow{font-size:9px;letter-spacing:2px;}
+
+      /* CTA section */
+      .cta{padding:36px 20px;}
+      .cta p{font-size:12px;}
+    }
 
     /* Bottom CTA */
     .cta{background:#0A0A0A;padding:52px 24px;text-align:center;}
@@ -336,6 +397,12 @@
 </div>
 
 <script>
+  // Update hint for touch devices
+  if ('ontouchstart' in window) {
+    var hint = document.querySelector('.hint');
+    if (hint) hint.textContent = 'Tap any marker to explore our services';
+  }
+
   // Trigger line draw + label fade when diagram enters view
   const diagram = document.getElementById('diagram');
   const observer = new IntersectionObserver(function(entries) {
