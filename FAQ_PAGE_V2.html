@@ -49,7 +49,7 @@
       --radius-sm:   8px;
     }
 
-    html { scroll-behavior: smooth; overflow: hidden; }
+    html { scroll-behavior: smooth; overflow-x: hidden; }
 
     body {
       font-family: 'Montserrat', sans-serif;
@@ -61,7 +61,7 @@
       width: 100%;
       margin: 0;
       padding: 0;
-      overflow: hidden;
+      overflow-x: hidden;
     }
 
     /* ═══════════════════════════════════════
@@ -1501,10 +1501,10 @@
 
 /* ── Report height to Wix parent (kills iframe scroll) ── */
 function reportHeight(){
-  var h = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+  var h = document.documentElement.offsetHeight || document.body.offsetHeight;
   window.parent.postMessage(JSON.stringify({height: h}), '*');
 }
-window.addEventListener('load', function(){ reportHeight(); setTimeout(reportHeight, 400); });
+window.addEventListener('load', function(){ reportHeight(); setTimeout(reportHeight, 600); });
 window.addEventListener('resize', reportHeight);
 if(window.ResizeObserver){ new ResizeObserver(reportHeight).observe(document.body); }
 document.querySelectorAll('.faq-item').forEach(function(el){
