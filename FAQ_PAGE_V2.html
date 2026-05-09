@@ -400,7 +400,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: transform 0.3s ease;
       color: #111111;
     }
     .toggle-icon svg { width: 20px; height: 20px; }
@@ -415,7 +415,7 @@
     .faq-body {
       display: grid;
       grid-template-rows: 0fr;
-      transition: grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: grid-template-rows 0.4s ease-in-out;
     }
     .faq-item.open .faq-body {
       grid-template-rows: 1fr;
