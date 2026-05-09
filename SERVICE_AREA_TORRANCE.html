@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -64,7 +64,7 @@
     .faq-item.open .faq-trigger-inner{background:rgba(139,0,0,0.03);}
     .q-label{flex:1;font-family:'Montserrat',sans-serif;font-size:14px;font-weight:700;color:var(--text);line-height:1.45;}
     .faq-item.open .q-label{color:var(--navy-2);}
-    .toggle-icon{flex-shrink:0;width:38px;height:38px;display:flex;align-items:center;justify-content:center;transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);color:#111;}
+    .toggle-icon{flex-shrink:0;width:38px;height:38px;display:flex;align-items:center;justify-content:center;transition:transform 720ms cubic-bezier(0.22,1,0.36,1);color:#111;}
     .toggle-icon svg{width:20px;height:20px;}
     .faq-item.open .toggle-icon{transform:rotate(45deg);}
     .faq-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows 0.4s ease-in-out;}
@@ -158,6 +158,7 @@
     <a href="https://www.3jsautobody.com/contact" class="cta-btn-g"><svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Free Quote</a>
   </div>
 </section>
-<script>(function(){document.querySelectorAll('.faq-trigger').forEach(function(btn){btn.addEventListener('click',function(){var item=btn.closest('.faq-item'),isOpen=item.classList.contains('open');document.querySelectorAll('.faq-item.open').forEach(function(o){o.classList.remove('open');o.querySelector('.faq-trigger').setAttribute('aria-expanded','false');});if(!isOpen){item.classList.add('open');btn.setAttribute('aria-expanded','true');}});});})();</script>
+<script>(function(){function faqClose(item){var p=item.querySelector('.faq-body');p.style.height=p.scrollHeight+'px';void p.offsetHeight;p.style.height='0px';item.classList.remove('open');item.querySelector('.faq-trigger').setAttribute('aria-expanded','false');}function faqOpen(item){var p=item.querySelector('.faq-body');item.classList.add('open');item.querySelector('.faq-trigger').setAttribute('aria-expanded','true');p.style.height=p.querySelector('.faq-body-inner').offsetHeight+'px';}document.querySelectorAll('.faq-body').forEach(function(p){p.addEventListener('transitionend',function(e){if(e.propertyName!=='height')return;if(p.closest('.faq-item').classList.contains('open'))p.style.height='auto';});});document.querySelectorAll('.faq-trigger').forEach(function(btn){btn.addEventListener('click',function(){var item=btn.closest('.faq-item'),wasOpen=item.classList.contains('open');document.querySelectorAll('.faq-item.open').forEach(faqClose);if(!wasOpen)faqOpen(item);});});})();</script>
 </body>
 </html>
+

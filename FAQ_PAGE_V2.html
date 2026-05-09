@@ -411,17 +411,13 @@
       transform: rotate(45deg);
     }
 
-    /* ── SMOOTH ACCORDION (CSS grid rows — no JS height measurement) ── */
+    /* ── SMOOTH ACCORDION (measured height) ── */
     .faq-body {
-      display: grid;
-      grid-template-rows: 0fr;
-      transition: grid-template-rows 0.4s ease-in-out;
-    }
-    .faq-item.open .faq-body {
-      grid-template-rows: 1fr;
+      height: 0;
+      overflow: hidden;
+      transition: height 720ms cubic-bezier(0.22, 1, 0.36, 1);
     }
     .faq-body-inner {
-      overflow: hidden;
     }
     .faq-answer {
       padding: 0 20px 20px 60px;
@@ -1397,24 +1393,10 @@
   'use strict';
 
   /* ── ACCORDION ── */
-  document.querySelectorAll('.faq-trigger').forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var item   = btn.closest('.faq-item');
-      var isOpen = item.classList.contains('open');
-
-      // Close all open items
-      document.querySelectorAll('.faq-item.open').forEach(function (open) {
-        open.classList.remove('open');
-        open.querySelector('.faq-trigger').setAttribute('aria-expanded', 'false');
-      });
-
-      // Open clicked item (if it was closed)
-      if (!isOpen) {
-        item.classList.add('open');
-        btn.setAttribute('aria-expanded', 'true');
-      }
-    });
-  });
+  function faqClose(item){var p=item.querySelector('.faq-body');p.style.height=p.scrollHeight+'px';void p.offsetHeight;p.style.height='0px';item.classList.remove('open');item.querySelector('.faq-trigger').setAttribute('aria-expanded','false');}
+  function faqOpen(item){var p=item.querySelector('.faq-body');item.classList.add('open');item.querySelector('.faq-trigger').setAttribute('aria-expanded','true');p.style.height=p.querySelector('.faq-body-inner').offsetHeight+'px';}
+  document.querySelectorAll('.faq-body').forEach(function(p){p.addEventListener('transitionend',function(e){if(e.propertyName!=='height')return;if(p.closest('.faq-item').classList.contains('open'))p.style.height='auto';});});
+  document.querySelectorAll('.faq-trigger').forEach(function(btn){btn.addEventListener('click',function(){var item=btn.closest('.faq-item'),wasOpen=item.classList.contains('open');document.querySelectorAll('.faq-item.open').forEach(faqClose);if(!wasOpen)faqOpen(item);});});
 
   /* ── SEARCH ── */
   var searchInput  = document.getElementById('faqSearch');
