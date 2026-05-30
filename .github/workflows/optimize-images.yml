@@ -1,0 +1,70 @@
+name: Optimize images
+
+# Runs on every push that touches the images folder.
+# Compresses + resizes any new/changed image IN PLACE (same filename, same
+# extension) so no <img src> links ever break. WebP stays WebP, PNG stays
+# PNG, JPG stays JPG — just smaller. Max width capped at 1920px.
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'images/**'
+
+# Stop the bot's own commit from re-triggering an endless loop.
+permissions:
+  contents: write
+
+jobs:
+  optimize:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2   # need the previous commit to diff against
+
+      - name: Install image tools
+        run: sudo apt-get update && sudo apt-get install -y imagemagick webp
+
+      - name: Compress changed images
+        run: |
+          # List image files changed in this push (Added or Modified).
+          BEFORE="${{ github.event.before }}"
+          if [ "$BEFORE" = "0000000000000000000000000000000000000000" ] || [ -z "$BEFORE" ]; then
+            # First push / new branch: scan everything under images/
+            FILES=$(git ls-files 'images/**')
+          else
+            FILES=$(git diff --name-only --diff-filter=AM "$BEFORE" "${{ github.sha }}" -- 'images/**')
+          fi
+
+          CHANGED=0
+          while IFS= read -r f; do
+            [ -z "$f" ] && continue
+            case "${f,,}" in
+              *.webp|*.png|*.jpg|*.jpeg)
+                echo "Optimizing: $f"
+                # -strip: drop metadata  | -resize '1920>': only shrink if wider
+                # -quality 82: strong compression, no visible loss on photos
+                mogrify -strip -resize '1920>' -quality 82 "$f"
+                CHANGED=1
+                ;;
+              *) ;;
+            esac
+          done <<< "$FILES"
+          echo "did_changes=$CHANGED" >> "$GITHUB_ENV"
+
+      - name: Commit optimized images
+        if: env.did_changes == '1'
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A 'images/**'
+          # Only commit if compression actually produced a smaller/different file.
+          if git diff --cached --quiet; then
+            echo "No size change — nothing to commit."
+          else
+            git commit -m "Auto-optimize images (compress + resize to 1920px max)"
+            git push
+          fi
