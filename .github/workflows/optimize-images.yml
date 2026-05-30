@@ -26,7 +26,7 @@ jobs:
           fetch-depth: 2   # need the previous commit to diff against
 
       - name: Install image tools
-        run: sudo apt-get update && sudo apt-get install -y imagemagick webp
+        run: sudo apt-get update && sudo apt-get install -y imagemagick webp pngquant
 
       - name: Compress changed images
         run: |
@@ -43,7 +43,16 @@ jobs:
           while IFS= read -r f; do
             [ -z "$f" ] && continue
             case "${f,,}" in
-              *.webp|*.png|*.jpg|*.jpeg)
+              *.png)
+                echo "Optimizing PNG: $f"
+                # 1) strip metadata + resize down to 1920px max (lossless step)
+                mogrify -strip -resize '1920>' "$f"
+                # 2) pngquant: lossy palette compression (60-70% smaller, keeps .png).
+                #    --skip-if-larger guarantees we never make a file bigger.
+                pngquant --force --skip-if-larger --strip --quality=65-90 --output "$f" -- "$f" || true
+                CHANGED=1
+                ;;
+              *.webp|*.jpg|*.jpeg)
                 echo "Optimizing: $f"
                 # -strip: drop metadata  | -resize '1920>': only shrink if wider
                 # -quality 82: strong compression, no visible loss on photos
